@@ -1,0 +1,1 @@
+%Questo Pendolo è monodimensionale
