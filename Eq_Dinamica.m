@@ -1,5 +1,5 @@
 
-function [B,C,G] = Eq_Dinamica(ms,mr,L,R,phi)
+function [B,C] = Eq_Dinamica(ms,mr,L,R)
 % Equazioni della dinamica
 % Scrivo le equazioni del moto nella forma B*ddot(q)+C*dot(q)+G = T
 % dove B forze di inerzia corrispondenti ad accelerazioni tangenziali
@@ -16,28 +16,22 @@ function [B,C,G] = Eq_Dinamica(ms,mr,L,R,phi)
 % mentre la vG = 2*vB;
 % vB^T*vB = L^2/4*\dot(psi)^2 e vG = L^2*\dot(psi)^2
 % allora K diventa:
-% K = % 1/2*ms*L^2/4*\dot(psi)^2+1/2*mr*L^2*\dot(psi)^2+
-% 1/2*1/24*L^2*\dot(psi)^2+
-% 1/2*mr*R^2*(\dot(psi)^2+\dot(theta)^2-2(\dot(psi)*\dot(theta));
+% K = % 1/2*ms*L^2/4*\dot(psi)^2+1/2*mr*L^2*\dot(psi)^2+ 1/2*1/24*L^2*\dot(psi)^2+ 1/2*mr*R^2*(\dot(psi)^2+\dot(theta)^2-2(\dot(psi)*\dot(theta));
 % allora B, ottenuta dalla derivazione rispetto ad una variabile \dot(psi)
 % e \dot(theta) diviene:
 
 g = 9.81; %gravità generica, non localizzata, servirebbe farlo [m/s^2]
 
-B11 = 1/4*ms*L*L+mr*L*L+0.0833*ms*L*L+mr*R*R;
+B11 = 0.25*ms*L*L+mr*L*L+0.0833*ms*L*L+mr*R*R;
 B12 = -mr*R*R;
 B21 = -mr*R*R;
 B22 =  mr*R*R;
 
-G1 = -ms*g*L/2*sind(phi)-mr*g*L*sind(phi);
-G2 = 0;
+% G1 = -ms*g*L/2*sind(phi)-mr*g*L*sind(phi);
+% G2 = 0;
 
 B = [B11 B12;
      B21 B22];
  
 C = [0;0];
-
-G = [ G1;
-      G2 ]; 
-
 end
