@@ -5,28 +5,34 @@ clear;
 close all;
 
 ms = 1;%massa asta [Kg]
-mr = 1;%massa rotore [Kg]
-L =  1;%braccio pendolo [m]
-R =  1;%raggio della ruota inerziale [m]
+mr = 0;%massa rotore [Kg]
+L =  0.5;%braccio pendolo [m]
+R =  0;%raggio della ruota inerziale [m]
 g = 9.81; %gravità m/s^2
 %Phi è immesso nella dinamica in modo da calcolare la posizione senza
 %linearizzazione.
 phi = 0;%è l'angolo di inclinazione relativo all'asse Y [deg]. ATTENZIONE
+Cd = 0; %Coefficiente di viscosità.
 
 [B,C] = Eq_Dinamica(ms,mr,L,R);
 
 T = 0;
 
-G1 = -ms*g*L/2*sind(phi)-mr*g*L*sind(phi);
+G1 = (-ms*g*L/2-mr*g*L)*sin(phi);
 G2 = T;
 
-x = ode45(@genera_EqDiff,[0 30],[0.05; 0; 0; 0;0]);
+[t,x] = ode45(@ode_pendulum_NOWHEEL,[0 30],[0.001; 0;0]);
+[t1,x1] = ode45(@ode_pendulum_WHEEL,[0 30],[0.001; 0;0]);
 
-% [t,y] = ode45(@eq_vander,[0 20],[2; 0]);
-% [t,y2] = ode45(@odefun,[0 20],[-1; 0]);
-% 
-% plot(t,y2(:,1));axis([0 10 0 10]);
+% plot(x.x, x.y(1,:),'k',x1.x,x1.y(1,:),'b'); axis([0 10 -2 5]);
 figure;
-plot(x.x,x.y(1,:)); title('Angolo phi');grid on; axis equal;
-
-
+plot(t,x(:,1),'k');hold on;
+plot(t,x(:,2),'b');
+plot(t,x(:,3),'r');
+hold off;
+figure;
+plot(t1,x1(:,1),'k');hold on;
+plot(t1,x1(:,2),'b');
+plot(t1,x1(:,3),'g');
+%plot(t1,x1(:,4),'r');
+hold off;
