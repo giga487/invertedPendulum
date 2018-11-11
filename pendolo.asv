@@ -1,3 +1,0 @@
-%main pendolo
-
-ode45(@f,[0 10],
