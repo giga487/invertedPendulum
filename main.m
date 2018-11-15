@@ -20,7 +20,7 @@ G1 = (-ms*g*L/2-mr*g*L);
 [A_l,B_l,C_l,D_l] = SSDinamica(B,C,G1);
 
 G = ss(A_l,B_l,C_l,D_l);
-G.StateName = {'phi','dot_phi','dot_dot_phi','theta','dot_theta','dot_dot_theta'};
+G.StateName = {'phi','dot_phi'};
 G.InputName = {'Coppia'};
 
 
