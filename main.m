@@ -28,3 +28,5 @@ G.InputName = {'Coppia'};
 %% Parametri Motori
 Wsat = 122*2*pi/60;
 Tsat = 36*100;
+
+%% Fine
