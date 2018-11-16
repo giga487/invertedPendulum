@@ -26,7 +26,15 @@ G.InputName = {'Coppia'};
 
 
 %% Parametri Motori
-Wsat = 122*2*pi/60;
-Tsat = 36*100;
+
+Coppia_stallo = 36*100;  %kg/m
+V_max = 12; %V
+I_stallo = 6.5; %A DI STALLO
+I_max_NOLOAD = 0.25; %A
+w_max = 122*2*pi/60; %rad/s
+
+R_max = V_max/I_max_NOLOAD;
+K = V_max/w_max;
+
 
 %% Fine
