@@ -20,7 +20,7 @@ G1 = (-ms*g*L/2-mr*g*L);
 
 [A_l,B_l,C_l,D_l] = SSDinamica(B_EnergiaCinetica,C,G1);
 
-Time_Campionamento = 0.0001;
+Time_Campionamento = 0.001;
 G = ss(A_l,B_l,C_l,D_l,'TimeUnit','seconds','Ts',Time_Campionamento);
 
 G.StateName = {'phi','dot_phi'};
@@ -72,34 +72,36 @@ max_Torque = max(Torque);
 min_w = min(w_rad_at_s);
 max_w = max(w_rad_at_s);
 
-% figure;
-% subplot(2,1,1);
-% Motor_Speed_animL = animatedline;
-% axis([0 100 min_w*1.5 max_w*1.5]);
-% xlabel('time [s]');ylabel('Speed rad/s');
-% 
-% subplot(2,1,2);
-% Torque_animL = animatedline;
-% axis([0 100 min_Torque*1.5 max_Torque*1.5]);
-% xlabel('time [s]');ylabel('Torque Kg/m');
-
 figure;
+subplot(2,1,1);
+Motor_Speed_animL = animatedline;
+axis([0 100 min_w*1.5 max_w*1.5]);
+xlabel('time [s]');ylabel('Speed rad/s');
+
+subplot(2,1,2);
+Torque_animL = animatedline;
+axis([0 100 min_Torque*1.5 max_Torque*1.5]);
+xlabel('time [s]');ylabel('Torque Kg/m');
+
+% figure;
 for i = 1:1:size(angle_degree)
     dt = dt + Time_Campionamento;
-    %drawnow limitrate;
+
     addpoints(Motor_Speed_animL,dt,w_rad_at_s(i));
     addpoints(Torque_animL,dt,Torque(i));
+    drawnow limitrate;
     
-    clf;
-    angle = angle_degree(i);
-    xf = L*sind(angle);
-    yf = L*cosd(angle);
-    x = [0,xf];
-    y = [0,yf];
-    line(x,y); hold on; grid on;
-    viscircles([xf yf],0.05,'color','black')
-    axis([-1 1 -0.2 1.2]);
-    hold off;
-    pause(0.01);
-    
+%     drawnow limitrate;
+%     clf;
+%     angle = angle_degree(i);
+%     xf = L*sind(angle);
+%     yf = L*cosd(angle);
+%     x = [0,xf];
+%     y = [0,yf];
+%     line(x,y); hold on; grid on;
+%     viscircles([xf yf],0.05,'color','black');
+%     axis([-1 1 -0.2 1.2]);
+%     hold off;
+    pause(Time_Campionamento);
+%     
 end
