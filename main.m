@@ -5,7 +5,7 @@ clear;
 close all;
 
 ms = 0.5;%massa asta [Kg]
-mr = 1;%massa rotore [Kg]
+mr = 2;%massa rotore [Kg]
 L =  0.5;%braccio pendolo [m]
 Raggio_Ruota =  0.15;%raggio della ruota inerziale [m]
 I_Ruota = mr*Raggio_Ruota*Raggio_Ruota;
@@ -20,7 +20,7 @@ G1 = (-ms*g*L/2-mr*g*L);
 
 [A_l,B_l,C_l,D_l] = SSDinamica(B_EnergiaCinetica,C,G1);
 
-Time_Campionamento = 0.01;
+Time_Campionamento = 0.0001;
 G = ss(A_l,B_l,C_l,D_l,'TimeUnit','seconds','Ts',Time_Campionamento);
 
 G.StateName = {'phi','dot_phi'};
@@ -29,19 +29,30 @@ G.InputName = {'Coppia'};
 
 %% Parametri Motori
 
-Coppia_stallo = 36*100;  %kg/m
+Coppia_stallo = 36*0.01/2;  %kg*m
 V_max = 12; %V
 I_stallo = 6.5; %A DI STALLO
 I_max_NOLOAD = 0.25; %A
-w_max = 122*2*pi/60; %rad/s
+w_max = 122*2*pi/60/2; %rad/s
 
 R_max = V_max/I_max_NOLOAD;
 K = V_max/w_max;
 
 b = 0.1; %N*m*s
+L = 2*0.001; %mH
 
 
-%% Fine
+%% LAUNCH SIMULINK PROJECT
+s = tf('s');
+G_w = K/(I_Ruota*s+b)*(R_max)+K^2;
+
+%% SIMULINK LAUNCH
+model = 'inv_Pendulum_L';
+load_system(model)
+sim(model)
+
+%% PLOT RESULTs
+
 L = 1;
 dt = 0;
 
