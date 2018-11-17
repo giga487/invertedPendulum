@@ -44,13 +44,12 @@ T_fine = 15;
 
 %% MOTORE
 
-A_m = [-R_max/L, -K/L, 0;
-       -K/I_Ruota, 0.1/I_Ruota, 0;
-       0, 1, 0];
+A_m = [-R_max/L, -K/L ;
+       -K/I_Ruota, 0.1/I_Ruota;];
  
-B_m = [1/L;0;0];
+B_m = [1/L;0];
 
-C_m = [ 0 1 0;
+C_m = [ 0 1;
         0 0 1;];
   
 D_m = 0;
