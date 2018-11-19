@@ -6,7 +6,7 @@ close all;
 
 global mr ms L Raggio_Ruota g
 
-ms = 0.5;%massa asta [Kg]
+ms = 0;%massa asta [Kg]
 mr = 2;%massa rotore [Kg]
 L =  0.5;%braccio pendolo [m]
 Raggio_Ruota =  0.15;%raggio della ruota inerziale [m]
@@ -26,11 +26,16 @@ Cd = 0; %Coefficiente di viscosità.
 
 Time_Campionamento = 0.001;
 T_fine = 10;
-G = ss(A_l,B_l,C_l,D_l,'TimeUnit','seconds','Ts',Time_Campionamento);
+G = ss(A_l,B_l,C_l,D_l,'TimeUnit','seconds');
 
 %G.StateName = {'phi','dot_phi','theta','dot_theta','ddot_theta'};
 G.StateName = {'phi','dot_phi'};
 G.InputName = {'dot_theta'};
+
+Co = ctrb(G.A,G.B);
+rankCO = rank(Co);
+OB = obsv(G.A,G.C);
+rankOB = rank(OB);
 
 
 %% Parametri Motori

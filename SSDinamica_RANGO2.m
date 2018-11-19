@@ -11,9 +11,12 @@ A_l = [0,1;
       -G1/Mpsi,0];
        
 
-B_l = [-mr*R*R/Mpsi;
-          0];
+B_l = [0;
+       -mr*R*R/Mpsi;];
+   
 C_l = [1,0;
        0,1];
+   
 D_l = 0;
+
 end
