@@ -4,6 +4,8 @@ clc;
 clear;
 close all;
 
+global mr ms L Raggio_Ruota g
+
 ms = 0.5;%massa asta [Kg]
 mr = 2;%massa rotore [Kg]
 L =  0.5;%braccio pendolo [m]
@@ -15,16 +17,20 @@ g = 9.81; %gravità m/s^2
 phi = 0;%è l'angolo di inclinazione relativo all'asse Y [deg]. ATTENZIONE
 Cd = 0; %Coefficiente di viscosità.
 
-[B_EnergiaCinetica,C] = Eq_Dinamica(ms,mr,L,Raggio_Ruota);
-G1 = (-ms*g*L/2-mr*g*L);
+% [B_EnergiaCinetica,C] = Eq_Dinamica(ms,mr,L,Raggio_Ruota);
+[B_EnergiaCinetica,C,G] = Eq_Dinamica_corretta(ms,mr,L,Raggio_Ruota);
 
-[A_l,B_l,C_l,D_l] = SSDinamica(B_EnergiaCinetica,C,G1);
+%[A_l,B_l,C_l,D_l] = SSDinamica_Corretta(B_EnergiaCinetica,C,G,Raggio_Ruota,mr);
+
+[A_l,B_l,C_l,D_l] = SSDinamica_RANGO2(B_EnergiaCinetica,C,G,Raggio_Ruota,mr);
 
 Time_Campionamento = 0.001;
+T_fine = 10;
 G = ss(A_l,B_l,C_l,D_l,'TimeUnit','seconds','Ts',Time_Campionamento);
 
+%G.StateName = {'phi','dot_phi','theta','dot_theta','ddot_theta'};
 G.StateName = {'phi','dot_phi'};
-G.InputName = {'Coppia'};
+G.InputName = {'dot_theta'};
 
 
 %% Parametri Motori
