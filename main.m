@@ -4,12 +4,10 @@ clc;
 clear;
 close all;
 
-global mr ms L Raggio_Ruota g
-
-ms = 0;%massa asta [Kg]
-mr = 2;%massa rotore [Kg]
-L =  0.5;%braccio pendolo [m]
-Raggio_Ruota =  0.15;%raggio della ruota inerziale [m]
+ms = 0.033;%massa asta [Kg]
+mr = 0.58;%massa rotore [Kg]
+L =  0.20;%braccio pendolo [m]
+Raggio_Ruota =  0.30;%raggio della ruota inerziale [m]
 I_Ruota = mr*Raggio_Ruota*Raggio_Ruota;
 g = 9.81; %gravità m/s^2
 %Phi è immesso nella dinamica in modo da calcolare la posizione senza
@@ -18,24 +16,33 @@ phi = 0;%è l'angolo di inclinazione relativo all'asse Y [deg]. ATTENZIONE
 Cd = 0; %Coefficiente di viscosità.
 
 % [B_EnergiaCinetica,C] = Eq_Dinamica(ms,mr,L,Raggio_Ruota);
-[B_EnergiaCinetica,C,G] = Eq_Dinamica_corretta(ms,mr,L,Raggio_Ruota);
+% [B_EnergiaCinetica,C,G] = Eq_Dinamica_corretta(ms,mr,L,Raggio_Ruota);
+
+[B_EnergiaCinetica,C,G] = Dinamica(ms,mr,L,Raggio_Ruota);
 
 %[A_l,B_l,C_l,D_l] = SSDinamica_Corretta(B_EnergiaCinetica,C,G,Raggio_Ruota,mr);
 
-[A_l,B_l,C_l,D_l] = SSDinamica_RANGO2(B_EnergiaCinetica,C,G,Raggio_Ruota,mr);
+% [A_l,B_l,C_l,D_l] = SSDinamica_RANGO2(B_EnergiaCinetica,C,G,Raggio_Ruota,mr);
+[A_l,B_l,C_l,D_l] = SSDinamica_3(B_EnergiaCinetica,C,G,Raggio_Ruota,mr)
+
 
 Time_Campionamento = 0.001;
 T_fine = 10;
-G = ss(A_l,B_l,C_l,D_l,'TimeUnit','seconds');
+G = ss(A_l,B_l,C_l,D_l,Time_Campionamento);
 
 %G.StateName = {'phi','dot_phi','theta','dot_theta','ddot_theta'};
-G.StateName = {'phi','dot_phi'};
+% G.StateName = {'phi','dot_phi'};
+G.StateName = {'phi','dot_phi','dot_theta'};
 G.InputName = {'dot_theta'};
 
 Co = ctrb(G.A,G.B);
 rankCO = rank(Co);
 OB = obsv(G.A,G.C);
 rankOB = rank(OB);
+
+eig(G.A)
+
+NOISE_rms = 0.02*pi/180; %rad
 
 
 %% Parametri Motori
