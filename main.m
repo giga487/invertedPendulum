@@ -5,9 +5,9 @@ clear;
 close all;
 
 ms = 0.033;%massa asta [Kg]
-mr = 0.58;%massa rotore [Kg]
-L =  0.20;%braccio pendolo [m]
-Raggio_Ruota =  0.30;%raggio della ruota inerziale [m]
+mr = 0.5;%massa rotore [Kg]
+L =  0.5;%braccio pendolo [m]
+Raggio_Ruota =  0.3;%raggio della ruota inerziale [m]
 I_Ruota = mr*Raggio_Ruota*Raggio_Ruota;
 g = 9.81; %gravità m/s^2
 %Phi è immesso nella dinamica in modo da calcolare la posizione senza
@@ -24,7 +24,6 @@ Cd = 0; %Coefficiente di viscosità.
 
 % [A_l,B_l,C_l,D_l] = SSDinamica_RANGO2(B_EnergiaCinetica,C,G,Raggio_Ruota,mr);
 [A_l,B_l,C_l,D_l] = SSDinamica_3(B_EnergiaCinetica,C,G,Raggio_Ruota,mr)
-
 
 Time_Campionamento = 0.001;
 T_fine = 10;
