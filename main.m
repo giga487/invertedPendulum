@@ -7,7 +7,7 @@ close all;
 ms = 0.033;%massa asta [Kg]
 mr = 0.5;%massa rotore [Kg]
 L =  0.5;%braccio pendolo [m]
-Raggio_Ruota =  0.3;%raggio della ruota inerziale [m]
+Raggio_Ruota =  0.15; %raggio della ruota inerziale [m]
 I_Ruota = mr*Raggio_Ruota*Raggio_Ruota;
 g = 9.81; %gravità m/s^2
 %Phi è immesso nella dinamica in modo da calcolare la posizione senza
@@ -26,8 +26,11 @@ Cd = 0; %Coefficiente di viscosità.
 [A_l,B_l,C_l,D_l] = SSDinamica_3(B_EnergiaCinetica,C,G,Raggio_Ruota,mr)
 
 Time_Campionamento = 0.001;
-T_fine = 10;
-G = ss(A_l,B_l,C_l,D_l,Time_Campionamento);
+
+T_fine = 500;
+
+% G = ss(A_l,B_l,C_l,D_l,Time_Campionamento);
+G = ss(A_l,B_l,C_l,D_l);
 
 %G.StateName = {'phi','dot_phi','theta','dot_theta','ddot_theta'};
 % G.StateName = {'phi','dot_phi'};
@@ -39,14 +42,29 @@ rankCO = rank(Co);
 OB = obsv(G.A,G.C);
 rankOB = rank(OB);
 
-eig(G.A)
+[Wn,zeta,P] = damp(G); %returns the poles of sys.
+
+freq = Wn./(2*pi); %in Hz
 
 NOISE_rms = 0.02*pi/180; %rad
 
+%% Controllo
+
+Kp = 1000;
+Kd = 0;
+
+%con questi due parametri il sistema funziona.
+%I risultati sono una coppia massima 
 
 %% Parametri Motori
 
-Coppia_stallo = 36*0.01/2;  %kg*m
+Coppia_stalloKgm = 36*0.01/2;  %kg*m
+%Il kilogrametro è un unità di misura tecnica dell'energia.
+%un kgm è pari ad un kg forza per un metro.
+%Il chilogrammetro equivale quindi al lavoro necessario per sollevare
+%di un metro un corpo di massa di un chilogrammo.
+%devo moltiplicare quindi per 9.81 per ottenere Nm
+Coppia_stalloNm = Coppia_stalloKgm*9.81;
 V_max = 12; %V
 I_stallo = 6.5; %A DI STALLO
 I_max_NOLOAD = 0.25; %A
@@ -57,7 +75,7 @@ K = V_max/w_max;
 
 b = 0.1; %N*m*s
 L = 2*0.001; %mH
-T_fine = 15;
+
 
 %% MOTORE
 
@@ -74,51 +92,3 @@ D_m = 0;
 
 Motore_SS = ss(A_m,B_m,C_m,D_m,'TimeUnit','seconds','Ts',Time_Campionamento);
 
-%% 
-model = 'inv_Pendulum_L';
-load_system(model)
-sim(model)
-
-%% PLOT RESULTs
-
-L = 1;
-dt = 0;
-
-min_Torque = min(Torque);
-max_Torque = max(Torque);
-min_w = min(w_rad_at_s);
-max_w = max(w_rad_at_s);
-
-figure;
-subplot(2,1,1);
-Motor_Speed_animL = animatedline;
-axis([0 100 min_w*1.5 max_w*1.5]);
-xlabel('time [s]');ylabel('Speed rad/s');
-
-subplot(2,1,2);
-Torque_animL = animatedline;
-axis([0 100 min_Torque*1.5 max_Torque*1.5]);
-xlabel('time [s]');ylabel('Torque Kg/m');
-
-% figure;
-for i = 1:1:size(angle_degree)
-    dt = dt + Time_Campionamento;
-
-    addpoints(Motor_Speed_animL,dt,w_rad_at_s(i));
-    addpoints(Torque_animL,dt,Torque(i));
-    drawnow limitrate;
-    
-%     drawnow limitrate;
-%     clf;
-%     angle = angle_degree(i);
-%     xf = L*sind(angle);
-%     yf = L*cosd(angle);
-%     x = [0,xf];
-%     y = [0,yf];
-%     line(x,y); hold on; grid on;
-%     viscircles([xf yf],0.05,'color','black');
-%     axis([-1 1 -0.2 1.2]);
-%     hold off;
-    pause(Time_Campionamento);
-%     
-end
