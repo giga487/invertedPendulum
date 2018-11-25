@@ -3,6 +3,7 @@
 clc;
 clear;
 close all;
+addpath('utils');
 
 ms = 0.033;%massa asta [Kg]
 mr = 0.5;%massa rotore [Kg]
@@ -50,8 +51,40 @@ NOISE_rms = 0.02*pi/180; %rad
 
 %% Calcolo del sistema in forma di quasi velocita
 
+syms x1 x2 x3 L real
 
+R = Rx_rad(x1);
 
+A01 = [R,[0;0;0];
+       0,0,0,1];
+A12 = [eye(3),[0;0;L];
+       0,0,0,1];
+   
+A02 = A01*A12;
+
+p = A02(1:3,4);
+R = A02(1:3,1:3);
+
+JacobianP = simplify([jacobian(p(1),[x1,x2,x3]);
+             jacobian(p(2),[x1,x2,x3]);
+             jacobian(p(3),[x1,x2,x3])]);
+         
+        
+dR_x1 = diff(R,x1);
+dR_x2 = diff(R,x2);
+dR_x3 = diff(R,x3);
+
+TOR1vee = simplify(dR_x1*R');
+TOR2vee = simplify(dR_x2*R');
+TOR3vee = simplify(dR_x3*R');
+
+TOR1 = [TOR1vee(3,2);TOR1vee(1,3);TOR1vee(2,1)];
+TOR2 = [TOR2vee(3,2);TOR2vee(1,3);TOR2vee(2,1)];
+TOR3 = [TOR3vee(3,2);TOR3vee(1,3);TOR3vee(2,1)];
+
+JacobianO = [TOR1,TOR2,TOR3];
+
+Jacobian = [JacobianP;JacobianO]
 
 %% Controllo
 
