@@ -4,9 +4,14 @@ clc;
 clear;
 close all;
 
-ms = 0.033;%massa asta [Kg]
-mr = 0.5;%massa rotore [Kg]
-L =  0.5;%braccio pendolo [m]
+
+%Valore calcolato con solidworks.
+V = 169449.89; %mm^3
+V = 169449.89*10^-9; %m^3
+mr = V*2700; %kg dove 2700 è la densità dell'alluminio massa rotore [Kg]
+
+ms = 0.05;%massa asta [Kg]
+L =  241*10^-3 ;%braccio pendolo [m]
 Raggio_Ruota =  0.15; %raggio della ruota inerziale [m]
 I_Ruota = mr*Raggio_Ruota*Raggio_Ruota;
 g = 9.81; %gravità m/s^2
@@ -48,15 +53,11 @@ freq = Wn./(2*pi); %in Hz
 
 NOISE_rms = 0.02*pi/180; %rad
 
+
 %% Calcolo del sistema in forma di quasi velocita
 
-
-
-
-%% Controllo
-
 Kp = 1000;
-Kd = 0;
+Kd = 10;
 
 %con questi due parametri il sistema funziona.
 %I risultati sono una coppia massima 
