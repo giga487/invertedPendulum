@@ -4,41 +4,20 @@ clc;
 clear;
 close all;
 
-
-%Valore calcolato con solidworks.
-V = 169449.89; %mm^3
-V = 169449.89*10^-9; %m^3
-mr = V*2700; %kg dove 2700 è la densità dell'alluminio massa rotore [Kg]
-
-ms = 0.05;%massa asta [Kg]
-L =  241*10^-3 ;%braccio pendolo [m]
-Raggio_Ruota =  0.15; %raggio della ruota inerziale [m]
-I_Ruota = mr*Raggio_Ruota*Raggio_Ruota;
-g = 9.81; %gravità m/s^2
 %Phi è immesso nella dinamica in modo da calcolare la posizione senza
 %linearizzazione.
-phi = 0;%è l'angolo di inclinazione relativo all'asse Y [deg]. ATTENZIONE
-Cd = 0; %Coefficiente di viscosità.
 
-% [B_EnergiaCinetica,C] = Eq_Dinamica(ms,mr,L,Raggio_Ruota);
-% [B_EnergiaCinetica,C,G] = Eq_Dinamica_corretta(ms,mr,L,Raggio_Ruota);
+[B_EnergiaCinetica,G] = calcolo_elementi_dinamica();
 
-[B_EnergiaCinetica,C,G] = Dinamica(ms,mr,L,Raggio_Ruota);
-
-%[A_l,B_l,C_l,D_l] = SSDinamica_Corretta(B_EnergiaCinetica,C,G,Raggio_Ruota,mr);
-
-% [A_l,B_l,C_l,D_l] = SSDinamica_RANGO2(B_EnergiaCinetica,C,G,Raggio_Ruota,mr);
-[A_l,B_l,C_l,D_l] = SSDinamica_3(B_EnergiaCinetica,C,G,Raggio_Ruota,mr)
+[A_l,B_l,C_l,D_l] = SSDinamica_3(B_EnergiaCinetica,G);
 
 Time_Campionamento = 0.001;
 
 T_fine = 500;
 
 % G = ss(A_l,B_l,C_l,D_l,Time_Campionamento);
-G = ss(A_l,B_l,C_l,D_l);
+G = ss(A_l,B_l,C_l,D_l,Time_Campionamento);
 
-%G.StateName = {'phi','dot_phi','theta','dot_theta','ddot_theta'};
-% G.StateName = {'phi','dot_phi'};
 G.StateName = {'phi','dot_phi','dot_theta'};
 G.InputName = {'dot_theta'};
 
@@ -56,8 +35,8 @@ NOISE_rms = 0.02*pi/180; %rad
 
 %% Calcolo del sistema in forma di quasi velocita
 
-Kp = 1000;
-Kd = 10;
+Kp = -50;
+Kd = 0;
 
 %con questi due parametri il sistema funziona.
 %I risultati sono una coppia massima 
@@ -81,20 +60,4 @@ K = V_max/w_max;
 
 b = 0.1; %N*m*s
 L = 2*0.001; %mH
-
-
-%% MOTORE
-
-A_m = [-R_max/L, -K/L, 0;
-       -K/I_Ruota, 0.1/I_Ruota, 0;
-       0, 1, 0];
- 
-B_m = [1/L;0;0];
-
-C_m = [ 0 1 0;
-        0 0 1;];
-  
-D_m = 0;
-
-Motore_SS = ss(A_m,B_m,C_m,D_m,'TimeUnit','seconds','Ts',Time_Campionamento);
 

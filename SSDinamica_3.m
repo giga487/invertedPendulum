@@ -1,10 +1,9 @@
-function [A_l,B_l,C_l,D_l] = SSDinamica_4(B,C,G,R,mr)
+function [A_l,B_l,C_l,D_l] = SSDinamica_3(B,G)
 
-Mpsi = B(1,1);
-Mtheta = B(2,2);
-B12 = B(1,2);
-B21 = B(2,1);
-
+IT = B(1,1);
+IG = B(2,2);
+IG = B(1,2);
+IG = B(2,1);
 G1 = G(1);
 
 %Scrivo il sistema in questo modo:
@@ -16,17 +15,17 @@ G1 = G(1);
 %ddot(theta) = 1/Delta*(-G1sin(psi)*mr*R^2+Mpsi*Tau);
 %
 
-Delta = Mpsi*Mtheta-B12*B21;
+Delta = IT*IG-IG*IG;
 %linearizzo.
 
 A_l = [0,1,0;
-      G1*Mpsi/Delta,0,0;
-      G1*B12/Delta,0,0];
+      G1*IG/Delta,0,0;
+      -G1*IG/Delta,0,0];
        
 
 B_l = [0;
-      -B12/Delta;
-      Mpsi/Delta];
+      -IG/Delta;
+      IT/Delta];
    
 C_l = [1,0,0;
        0,1,0;
