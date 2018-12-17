@@ -3,31 +3,44 @@ clear
 close all;
 
 %Evidenzio la dinamica del pendolo inverso
-
-mt = 0.83; %kg
-g = 9.81; %m/s^2
 L = 0.25; %lunghezza del pendolo.
-Irot = 0.0015; %da solidworks
-Itot = 0.13; %da solidworks
+diametro_ruota = 0.15;
+m_ruota = 0.457;
+I_ruota = m_ruota*(diametro_ruota/2)^2;
+m_mot = 0.333;
+I_mot = L^2*m_mot;
+m_asta = 0.05;
+I_asta = m_asta*(L^2)/12;
+g = 9.81; %m/s^2
 
-A21 = mt*g*L/Itot
-A31 = -mt*g*L/Itot
+
+B11 = m_asta*(L/2)^2+m_ruota*L^2+m_mot*L^2 + I_asta+I_ruota+I_mot;
+B12 = I_ruota;
+B21 = I_ruota;
+B22 = I_ruota;
+Delta = B11*B22-B12*B21;
+
+m_TOT = m_mot+m_asta/2+m_ruota;
 
 Time_Campionamento = 0.001; %s
+
+A21 = B22*m_TOT*g*L/Delta;
+A31 = -m_TOT*g*L*B21/Delta;
 
 A = [0,1,0;
      A21,0,0;
      A31,0,0;];
-B = [0;-1/Itot;(Itot+Irot)/(Irot*Itot)];
+ 
+B = [0;-B21/Delta;B11/Delta];
 
 C = [1,0,0; %psi
-     0,1,0, %dot_psi
+     0,1,0; %dot_psi
      0,0,1];%dot_theta
- D = 0;
+D = 0;
  
- G = ss(A,B,C,D)
+G = ss(A,B,C,D)
  
- G.StateName = {'phi','dot_phi','dot_theta'};
+G.StateName = {'phi','dot_phi','dot_theta'};
 G.InputName = {'dot_theta'};
 
 Co = ctrb(G.A,G.B);
@@ -44,9 +57,8 @@ NOISE_rms = 0.02*pi/180; %rad
 
 %% Calcolo del sistema in forma di quasi velocita
 
-Kp = -50;
-Kd = -10;
-
+Kp = -250;
+Kd = -10
 %con questi due parametri il sistema funziona.
 %I risultati sono una coppia massima 
 
