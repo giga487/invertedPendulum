@@ -21,11 +21,11 @@ B22 = I_ruota;
 Delta = B11*B22-B12*B21;
 
 m_TOT = m_mot+m_asta/2+m_ruota;
-
+G1 = m_TOT*g*L;
 Time_Campionamento = 0.001; %s
 
-A21 = B22*m_TOT*g*L/Delta;
-A31 = -m_TOT*g*L*B21/Delta;
+A21 = B22*G1/Delta;
+A31 = -G1*B21/Delta;
 
 A = [0,1,0;
      A21,0,0;
@@ -82,4 +82,21 @@ K = V_max/w_max;
 b = 0.1; %N*m*s
 L = 2*0.001; %mH
 
- 
+%% Motore
+
+s = tf('s');
+b = 0.1; %attrito viscoso
+K = 0.01;
+R = 15; %CASO PEGGIORE di stallo del motore
+
+g = K/((I_ruota*s+b)*R+K^2)
+
+Motore_num = K;
+Motore_den = [I_ruota*R, b*R+K^2];
+
+
+figure(1);bode(g)
+
+g2 = 10/(s+100)
+
+figure(2);bode(g2)
