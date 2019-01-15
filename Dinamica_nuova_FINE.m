@@ -17,7 +17,6 @@ I_asta = m_asta*(L^2)/12;
 
 g = 9.81; %m/s^2
 
-
 B11 = m_asta*(L/2)^2+m_ruota*L^2+m_mot*L^2 + I_asta+I_ruota+I_mot;
 B12 = I_ruota;
 B21 = I_ruota;
