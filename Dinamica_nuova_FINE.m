@@ -10,7 +10,7 @@ diametro_ruota = 0.09; %m
 m_ruota = 0.141061;
 m_mot = 0.333;
 m_asta = 0.05;
-I_ruota = 0.0494; %SOLIDOWORKS
+I_ruota = 0.001026; %SOLIDOWORKS
 I_ruota_stima = m_ruota*(diametro_ruota/2)^2;
 I_mot = L^2*m_mot;
 I_asta = m_asta*(L^2)/12;
@@ -83,27 +83,27 @@ w_max = 122*2*pi/60/2; %rad/s
 
 R_max = V_max/I_max_NOLOAD;
 
-L = 2*0.001; %mH
+L = 0; %mH
 
 s = tf('s');
 b = 0.1; %attrito viscoso
 r_peggiore = 3;
-K = (V_max-I_max_NOLOAD*r_peggiore)/w_max
+K = 0.65*(V_max-I_max_NOLOAD*r_peggiore)/w_max
 R = r_peggiore; %CASO PEGGIORE di stallo del motore
 
-g = K/((I_ruota*s+b)*R+K^2)
 g2 = 0.5/(s+3);
-Motore_num = K;
-Motore_den = [I_ruota*R, b*R+K^2];
 
 num_dc = K;
 den_dc = [(I_ruota*L) ((I_ruota*R)+(L*b)) ((b*R)+K^2)];
 dcmotor = tf(num_dc,den_dc)
 
 
-damp(g)
+damp(dcmotor)
 figure(1);
 subplot(1,2,1);
 bode(dcmotor);grid on;
 subplot(1,2,2);
 bode(g2);grid on;
+
+figure;
+step(dcmotor)
