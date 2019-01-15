@@ -5,7 +5,8 @@ close all;
 %Evidenzio la dinamica del pendolo inverso
 L = 0.25; %lunghezza del pendolo.
 diametro_ruota = 0.15;
-m_ruota = 0.457;
+% m_ruota = 0.457;
+m_ruota = 1;
 I_ruota = m_ruota*(diametro_ruota/2)^2;
 m_mot = 0.333;
 I_mot = L^2*m_mot;
@@ -14,7 +15,7 @@ I_asta = m_asta*(L^2)/12;
 g = 9.81; %m/s^2
 
 
-B11 = m_asta*(L/2)^2+m_ruota*L^2+m_mot*L^2 + I_asta+I_ruota+I_mot;
+B11 = m_asta*(L/2)^2+m_ruota*L^2+m_mot*L^2+I_asta+I_ruota+I_mot;
 B12 = I_ruota;
 B21 = I_ruota;
 B22 = I_ruota;
@@ -24,12 +25,12 @@ m_TOT = m_mot+m_asta/2+m_ruota;
 
 Time_Campionamento = 0.001; %s
 
-A21 = B22*m_TOT*g*L/Delta;
-A31 = -m_TOT*g*L*B21/Delta;
+A21 = -B22*m_TOT*g*L/Delta;
+A31 = +m_TOT*g*L*B21/Delta;
 
 A = [0,1,0;
      A21,0,0;
-     A31,0,0;];
+     A31,0,0;]
  
 B = [0;-B21/Delta;B11/Delta];
 
@@ -57,8 +58,8 @@ NOISE_rms = 0.02*pi/180; %rad
 
 %% Calcolo del sistema in forma di quasi velocita
 
-Kp = -250;
-Kd = -10
+Kp = -170;
+Kd = -25;
 %con questi due parametri il sistema funziona.
 %I risultati sono una coppia massima 
 
@@ -82,4 +83,4 @@ K = V_max/w_max;
 b = 0.1; %N*m*s
 L = 2*0.001; %mH
 
- 
+%% Caratterizzazione motore
