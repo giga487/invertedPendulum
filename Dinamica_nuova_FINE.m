@@ -83,7 +83,7 @@ w_max = 122*2*pi/60/2; %rad/s
 
 R_max = V_max/I_max_NOLOAD;
 
-L = 0; %mH
+L = 50; %mH
 
 s = tf('s');
 b = 0.1; %attrito viscoso
