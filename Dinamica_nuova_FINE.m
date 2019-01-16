@@ -11,6 +11,11 @@ m_ruota = 0.141061;
 m_mot = 0.333;
 m_asta = 0.05;
 I_ruota = 0.001026; %SOLIDOWORKS
+%La massa rotante risulta troppo leggera o troppo piccola dimensionalmente
+%per il motore. Ci sono pochi frangenti in cui il sistema funziona, sarebbe
+%opportuno avere una massa rotante con un'inerzia maggiore, almeno il
+%doppio.
+
 I_ruota_stima = m_ruota*(diametro_ruota/2)^2;
 I_mot = L^2*m_mot;
 I_asta = m_asta*(L^2)/12;
@@ -67,7 +72,7 @@ Kd = 0;
 
 %% Parametri Motori
 
-Coppia_stallo_Kgm_MAX = 36*0.01;  %kg*m
+Coppia_stallo_Kgm_MAX = 36*0.01;  %da36kg.cm a kg.m
 Coppia_stalloKgm = Coppia_stallo_Kgm_MAX;  %kg*m
 %Il kilogrametro è un unità di misura tecnica dell'energia.
 %un kgm è pari ad un kg forza per un metro.
@@ -75,35 +80,21 @@ Coppia_stalloKgm = Coppia_stallo_Kgm_MAX;  %kg*m
 %di un metro un corpo di massa di un chilogrammo.
 %devo moltiplicare quindi per 9.81 per ottenere Nm
 Coppia_stalloNm_TOT = Coppia_stalloKgm*9.81;
-Coppia_stalloNm = Coppia_stalloNm_TOT/2;
+Coppia_stalloNm = Coppia_stalloNm_TOT*3/4;
 V_max = 12; %V
 I_stallo = 6.5; %A DI STALLO
 I_max_NOLOAD = 0.25; %A
-w_max = 122*2*pi/60/2; %rad/s
+w_max = 122*pi/30; %da rpm a rad/s
 
-R_max = V_max/I_max_NOLOAD;
+R_max = V_max/I_stallo;
 
-L = 50; %mH
+Linduttanza = 0.0002; %mH
 
 s = tf('s');
-b = 0.1; %attrito viscoso
+b = 0.01; %attrito viscoso
 r_peggiore = 3;
-K = 0.65*(V_max-I_max_NOLOAD*r_peggiore)/w_max
+K = (V_max-I_max_NOLOAD*r_peggiore)/w_max
 R = r_peggiore; %CASO PEGGIORE di stallo del motore
 
-g2 = 0.5/(s+3);
+tau = R*I_ruota/K^2;
 
-num_dc = K;
-den_dc = [(I_ruota*L) ((I_ruota*R)+(L*b)) ((b*R)+K^2)];
-dcmotor = tf(num_dc,den_dc)
-
-
-damp(dcmotor)
-figure(1);
-subplot(1,2,1);
-bode(dcmotor);grid on;
-subplot(1,2,2);
-bode(g2);grid on;
-
-figure;
-step(dcmotor)
