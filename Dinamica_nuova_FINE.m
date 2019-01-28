@@ -6,15 +6,14 @@ close all;
 L = 0.25; %lunghezza del pendolo.
 % diametro_ruota = 0.15;
 % m_ruota = 0.457;
-diametro_ruota = 0.09; %m
-m_ruota = 0.141061;
+diametro_ruota = 0.11; %m
+m_ruota = 0.182676;
 m_mot = 0.333;
 m_asta = 0.05;
-I_ruota = 0.001026; %SOLIDOWORKS
+I_ruota = 0.000327; %SOLIDOWORKS
 %La massa rotante risulta troppo leggera o troppo piccola dimensionalmente
 %per il motore. Ci sono pochi frangenti in cui il sistema funziona, sarebbe
-%opportuno avere una massa rotante con un'inerzia maggiore, almeno il
-%doppio.
+%opportuno avere una massa rotante con un'inerzia maggiore
 
 I_ruota_stima = m_ruota*(diametro_ruota/2)^2;
 I_mot = L^2*m_mot;
@@ -46,10 +45,10 @@ C = [1,0,0; %psi
      0,0,1];%dot_theta
 D = 0;
  
-G = ss(A,B,C,D)
+G = ss(A,B,C,D);
  
 G.StateName = {'phi','dot_phi','dot_theta'};
-G.InputName = {'dot_theta'};
+G.InputName = {'T'};
 
 Co = ctrb(G.A,G.B);
 rankCO = rank(Co);
@@ -62,13 +61,6 @@ freq = Wn./(2*pi); %in Hz
 
 NOISE_rms = 0.02*pi/180; %rad
 
-
-%% Calcolo del sistema in forma di quasi velocita
-
-Kp = -0.01;
-Kd = 0;
-%con questi due parametri il sistema funziona.
-%I risultati sono una coppia massima 
 
 %% Parametri Motori
 
@@ -90,11 +82,21 @@ R_max = V_max/I_stallo;
 
 Linduttanza = 0.0002; %mH
 
-s = tf('s');
 b = 0.01; %attrito viscoso
-r_peggiore = 3;
+r_peggiore = 10;
 K = (V_max-I_max_NOLOAD*r_peggiore)/w_max
 R = r_peggiore; %CASO PEGGIORE di stallo del motore
 
-tau = R*I_ruota/K^2;
+
+
+%% Analisi Motore, Generazione Curve
+
+punti_noti = [0,Coppia_stalloNm_TOT; w_max,0]
+punti_MaxPower = [w_max/2,Coppia_stalloNm_TOT/2];
+figure;
+plot(punti_noti(:,1),punti_noti(:,2)); grid on;
+title('Retta di Carico'); ylabel('Torque [Nm]');xlabel('Speed [rad / s]');hold on;
+plot(punti_MaxPower(1,1),punti_MaxPower(1,2),'bo');
+
+%% Funzione_Trasferimento Motore DC acceleration 
 
