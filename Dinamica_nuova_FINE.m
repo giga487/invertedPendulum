@@ -7,10 +7,12 @@ L = 0.25; %lunghezza del pendolo.
 % diametro_ruota = 0.15;
 % m_ruota = 0.457;
 diametro_ruota = 0.11; %m
-m_ruota = 0.182676;
+% m_ruota = 0.182676
+m_ruota = 0.666003
 m_mot = 0.333;
 m_asta = 0.05;
-I_ruota = 0.000327; %SOLIDOWORKS
+% I_ruota = 0.000327; %SOLIDOWORKS
+I_ruota = 0.001445;
 %La massa rotante risulta troppo leggera o troppo piccola dimensionalmente
 %per il motore. Ci sono pochi frangenti in cui il sistema funziona, sarebbe
 %opportuno avere una massa rotante con un'inerzia maggiore
